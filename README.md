@@ -1,5 +1,3 @@
-Claro! Aqui está uma sugestão de nome e uma descrição para o seu repositório no GitHub:
-
 # Istio Policy Generator
 
 Istio Policy Generator is a Bash script tool designed to streamline the process of generating and applying Istio VirtualService policies in a Kubernetes cluster. The tool reads a YAML configuration file specifying the services and their corresponding paths, and generates the appropriate VirtualService policies.
