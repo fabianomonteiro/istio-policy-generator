@@ -1,0 +1,10 @@
+service1:
+  paths:
+    - /api/v1
+    - /api/v2
+service2: {}
+service3:
+  paths:
+    - /user/login
+    - /user/register
+service4: {}

@@ -1,0 +1,6 @@
+  - match:
+    - uri:
+        prefix: {{path}}
+    route:
+    - destination:
+        host: new-destination
