@@ -123,7 +123,6 @@ spec:
 ## License
 
 This project is licensed under the MIT License.
-```
 
 ### Estrutura do Projeto:
 ```
