@@ -9,7 +9,9 @@ spec:
   hosts:
   - {{host}}
   http:
-  - route:
+  - rewrite:
+      uri: "{{prefix}}"
+    route:
     - destination:
         host: {{newHost}}
         port:

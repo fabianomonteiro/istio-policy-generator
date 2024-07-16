@@ -57,18 +57,17 @@ while IFS= read -r service; do
         template=$(cat "$templates_dir/template_redirect_all.yaml")
         echo "$template" | awk -v serviceName="$service" -v ns="$ns" \
                           -v host="$service" -v newHost="$newHost" -v port="$port" \
-                          -v labelKey="$default_labelKey" -v labelValue="$default_labelValue" \
-                          '{gsub("{{serviceName}}", serviceName); gsub("{{namespace}}", ns); gsub("{{host}}", host); gsub("{{newHost}}", newHost); gsub("{{port}}", port); gsub("{{labelKey}}", labelKey); gsub("{{labelValue}}", labelValue); print}' > "$output_dir/${service}_policy.yaml"
+                          -v labelKey="$default_labelKey" -v labelValue="$default_labelValue" -v prefix="$prefix" \
+                          '{gsub("{{serviceName}}", serviceName); gsub("{{namespace}}", ns); gsub("{{host}}", host); gsub("{{newHost}}", newHost); gsub("{{port}}", port); gsub("{{labelKey}}", labelKey); gsub("{{labelValue}}", labelValue); gsub("{{prefix}}", prefix); print}' > "$output_dir/${service}_policy.yaml"
     else
         # Redirecionar apenas os paths especificados
         echo "Redirecionando paths específicos do serviço $service"
         http_routes=""
         for path in $(echo "$paths" | gojq -r '.[]'); do
             route_item_template=$(cat "$templates_dir/template_route_item.yaml")
-            route_item=$(echo "$route_item_template" | awk -v prefix="$path" -v newHost="$newHost" -v port="$port" \
-                                                     '{gsub("{{prefix}}", prefix); gsub("{{newHost}}", newHost); gsub("{{port}}", port); print}')
-            http_routes="${http_routes}
-${route_item}"
+            route_item=$(echo "$route_item_template" | awk -v match="$path" -v newHost="$newHost" -v port="$port" -v prefix="$prefix" \
+                                                     '{gsub("{{match}}", match); gsub("{{newHost}}", newHost); gsub("{{port}}", port); gsub("{{prefix}}", prefix); print}')
+            http_routes="${http_routes}\n${route_item}"
         done
 
         template=$(cat "$templates_dir/template_redirect_paths.yaml")
@@ -77,7 +76,7 @@ ${route_item}"
         echo "$template" | awk -v serviceName="$service" -v ns="$ns" \
                           -v host="$service" -v labelKey="$default_labelKey" -v labelValue="$default_labelValue" \
                           -v http_routes="$escaped_http_routes" \
-                          '{gsub("{{serviceName}}", serviceName); gsub("{{namespace}}", ns); gsub("{{host}}", host); gsub("{{labelKey}}", labelKey); gsub("{{labelValue}}", labelValue); gsub("{{http_routes}}", http_routes); print}' > "$output_dir/${service}_policy.yaml"
+                          '{gsub("{{serviceName}}", serviceName); gsub("{{namespace}}", ns); gsub("{{host}}", host); gsub("{{labelKey}}", labelKey); gsub("{{labelValue}}", labelValue); gsub(/\{\{http_routes\}\}/, http_routes); print}' > "$output_dir/${service}_policy.yaml"
     fi
 done < <(gojq --yaml-input -r 'keys[]' < "$config_file")
 

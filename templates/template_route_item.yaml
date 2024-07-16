@@ -1,7 +1,9 @@
   - match:
     - uri:
-        prefix: {{prefix}}
+        prefix: {{match}}
     route:
+    - rewrite:
+        uri: "{{prefix}}"
     - destination:
         host: {{newHost}}
         port:
