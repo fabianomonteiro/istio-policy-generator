@@ -1,8 +1,11 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: {{service}}-redirect
+  name: {{serviceName}}
+  namespace: {{namespace}}
+  labels:
+    {{labelKey}}: {{labelValue}}
 spec:
   hosts:
-  - {{service}}
+  - {{host}}
   http: {{http_routes}}
